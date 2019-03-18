@@ -139,4 +139,8 @@ api_key=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head -n 1)
 
 chmod -R 775 /var/www/ 
 chown -R www-data:www-data /var/www/
+
+# run migrate script incase humhub version is updated 
+/usr/bin/php /var/www/html/humhub/protected/yii migrate/up
+
 """
