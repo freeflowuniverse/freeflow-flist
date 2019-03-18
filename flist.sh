@@ -11,7 +11,7 @@ apt-get install php-curl php-gd php-mbstring -y
 apt-get install php-intl php-zip wget -y
 apt-get install php-ldap php-apcu php-sqlite3 -y
 apt-get install cron ssh telnet -y
-apt-get install net-tools iputils-ping vim curl tmux rsync -y
+apt-get install net-tools iputils-ping vim curl tmux rsync git -y
 apt-get install restic -y 
 wget https://raw.githubusercontent.com/threefoldgrid/freeflow/master/utils/startup.toml -O /.startup.toml
 
