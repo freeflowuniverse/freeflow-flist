@@ -137,6 +137,6 @@ wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/commo
 /usr/bin/php /var/www/html/humhub/protected/yii migrate/up
 
 # add rest module if not exist
-api_key=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head -n 1)
+api_key=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 [ -d /var/www/html/humhub/protected/modules/rest ] || ( cd /var/www/html/humhub/protected/modules ; git clone https://github.com/freeflowpages/freeflow-rest-api-module.git rest ; chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/; /usr/bin/php /var/www/html/humhub/protected/yii module/enable rest ; mysql -uroot -p$ROOT_DB_PASS humhub -e \"insert into api_user (client, api_key, active) values ('client1', '$api_key', 1)\")
 """
