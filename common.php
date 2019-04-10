@@ -21,5 +21,9 @@ return [
              'showScriptName' => false,
              'enablePrettyUrl' => true,
          ],
+   ],
+ 	'params' => [
+             'hidePoweredBy' => true
     ]
+
 ];
