@@ -140,5 +140,5 @@ wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/commo
 api_key=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 [ -d /var/www/html/humhub/protected/modules/rest ] || ( cd /var/www/html/humhub/protected/modules ; git clone https://github.com/freeflowpages/freeflow-rest-api-module.git rest ; chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/; /usr/bin/php /var/www/html/humhub/protected/yii module/enable rest ; mysql -uroot -p$ROOT_DB_PASS humhub -e \"insert into api_user (client, api_key, active) values ('client1', '$api_key', 1)\")
 # add freeflow theme 
-[ -d /var/www/html/humhub/themes/Freeflow ] || ( cd /var/www/html/humhub/themes ; git https://github.com/freeflowpages/freeflow-theme.git Freeflow ; chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/; /usr/bin/php /var/www/html/humhub/protected/yii theme/switch Freeflow )
+[ -d /var/www/html/humhub/themes/Freeflow ] || ( cd /var/www/html/humhub/themes ; git clone https://github.com/freeflowpages/freeflow-theme.git Freeflow ; chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/; /usr/bin/php /var/www/html/humhub/protected/yii theme/switch Freeflow )
 """
