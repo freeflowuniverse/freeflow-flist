@@ -120,25 +120,52 @@ export LANG=en_US.UTF-8
 export LANGUAGE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-[ \"$(find /var/www/html/humhub -maxdepth 0 -empty)\" ] && (cd /var/www/html ; wget https://www.humhub.org/en/download/package/humhub-1.3.10.tar.gz > /dev/null && tar -xvf humhub-1.3.10.tar.gz --strip-components=1 --directory /var/www/html/humhub > /dev/null) 
+if [ -f /var/www/html/humhub/protected/modules/enterprise/module.json ]; then
+        echo humhub version fie exist, checking running version ...
+        HUMHUB_CURRENT_PRODUCTION_VERSION=$(grep version /var/www/html/humhub/protected/modules/enterprise/module.json | awk -F: '{print $2}'| awk -F, '{print $1}'|tr -d '"')
+        if [ $HUMHUB_CURRENT_PRODUCTION_VERSION != $HUMHUB_INSTALLATION_VERSION ];then
+                echo humhub is not updated, going to update it ...
+                mkdir -p /backup/humhub`date +%Y-%m-%d`
+                cd /var/www/html/humhub
+                mv $(ls -A) /backup/humhub`date +%Y-%m-%d`
+                cd /var/www/html
+                wget https://www.humhub.org/en/download/package/humhub-$HUMHUB_INSTALLATION_VERSION.tar.gz > /dev/null
+                tar -xvf humhub-$HUMHUB_INSTALLATION_VERSION.tar.gz --strip-components=1 --directory /var/www/html/humhub > /dev/null
+                iyo_file=\"/var/www/html/humhub/protected/humhub/modules/user/authclient/IYO.php\"
+                common_file=\"/var/www/html/humhub/protected/config/common.php\"
+                dynamic_file=\"/var/www/html/humhub/protected/config/dynamic.php\"
 
-# verify that below files are exist 
+                [ -f \"$iyo_file\" ] || wget https://raw.githubusercontent.com/freeflowpages/freeflow-iyo-module/master/IYO.php -O $iyo_file
+                wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/common.php -O $common_file
 
-iyo_file=\"/var/www/html/humhub/protected/humhub/modules/user/authclient/IYO.php\"
-common_file=\"/var/www/html/humhub/protected/config/common.php\"
+                [ -f \"$dynamic_file\" ] || wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/dynamic.php -O $dynamic_file
 
-[ -f \"$iyo_file\" ] || wget https://raw.githubusercontent.com/freeflowpages/freeflow-iyo-module/master/IYO.php -O $iyo_file
-wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/common.php -O $common_file
+                # for pretty urls
+                [ -f /var/www/html/humhub/.htaccess.dist ] && mv /var/www/html/humhub/.htaccess.dist /var/www/html/humhub/.htaccess
 
-# for pretty urls
-[ -f /var/www/html/humhub/.htaccess.dist ] && mv /var/www/html/humhub/.htaccess.dist /var/www/html/humhub/.htaccess
+                # run migrate script incase humhub version is updated
+                /usr/bin/php /var/www/html/humhub/protected/yii migrate/up --includeModuleMigrations=1
+                /usr/bin/php /var/www/html/humhub/protected/yii module/update-all
 
-# run migrate script incase humhub version is updated 
-/usr/bin/php /var/www/html/humhub/protected/yii migrate/up
+                # add rest module if not exist
+                api_key=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+                if [ ! -d /var/www/html/humhub/protected/modules/rest ];then
+                       cd /var/www/html/humhub/protected/modules
+                       git clone https://github.com/freeflowpages/freeflow-rest-api-module.git rest
+                       chown -R www-data:www-data /var/www/
+                       chmod -R 775 /var/www/
+                       /usr/bin/php /var/www/html/humhub/protected/yii module/enable rest
+                       mysql -uroot -p$ROOT_DB_PASS humhub -e \"insert into api_user (client, api_key, active) values ('client1', '$api_key', 1)\"
+                fi
+                # add freeflow theme
+                if [ ! -d /var/www/html/humhub/themes/Freeflow ];then
+                        cd /var/www/html/humhub/themes
+                        git clone https://github.com/freeflowpages/freeflow-theme.git Freeflow
+                        chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/
+                        /usr/bin/php /var/www/html/humhub/protected/yii theme/switch Freeflow
+                fi
 
-# add rest module if not exist
-api_key=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-[ -d /var/www/html/humhub/protected/modules/rest ] || ( cd /var/www/html/humhub/protected/modules ; git clone https://github.com/freeflowpages/freeflow-rest-api-module.git rest ; chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/; /usr/bin/php /var/www/html/humhub/protected/yii module/enable rest ; mysql -uroot -p$ROOT_DB_PASS humhub -e \"insert into api_user (client, api_key, active) values ('client1', '$api_key', 1)\")
-# add freeflow theme 
-[ -d /var/www/html/humhub/themes/Freeflow ] || ( cd /var/www/html/humhub/themes ; git clone https://github.com/freeflowpages/freeflow-theme.git Freeflow ; chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/; /usr/bin/php /var/www/html/humhub/protected/yii theme/switch Freeflow )
+        else
+                echo humhub is already updated and it is version is $HUMHUB_CURRENT_PRODUCTION_VERSION
+        fi
 """
