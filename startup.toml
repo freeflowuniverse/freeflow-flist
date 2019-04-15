@@ -120,7 +120,7 @@ export LANG=en_US.UTF-8
 export LANGUAGE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-INSTALL_FFP(){
+INSTALL_FFP() {
 	   cd /var/www/html
            wget https://www.humhub.org/en/download/package/humhub-$HUMHUB_INSTALLATION_VERSION.tar.gz > /dev/null
            tar -xvf humhub-$HUMHUB_INSTALLATION_VERSION.tar.gz --strip-components=1 --directory /var/www/html/humhub > /dev/null
