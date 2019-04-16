@@ -30,6 +30,30 @@ if [ -f /var/www/html/humhub/protected/humhub/config/common.php ]; then
 		# run migrate script incase humhub version is updated
 		/usr/bin/php /var/www/html/humhub/protected/yii migrate/up --includeModuleMigrations=1
 		/usr/bin/php /var/www/html/humhub/protected/yii module/update-all
+		# add api module 
+		if [ ! -d /var/www/html/humhub/protected/modules/rest ];then
+                        cd /var/www/html/humhub/protected/modules
+                        git clone https://github.com/freeflowpages/freeflow-rest-api-module.git rest
+                        chown -R www-data:www-data /var/www/
+                        chmod -R 775 /var/www/
+                        /usr/bin/php /var/www/html/humhub/protected/yii module/enable rest
+                        mysql -uroot -p$ROOT_DB_PASS humhub -e "insert into api_user (client, api_key, active) values ('client1', '$api_key', 1)"
+		else 
+			cd /var/www/html/humhub/protected/modules/rest 
+			git pull
+                fi
+		
+		# add freeflow theme
+                if [ ! -d /var/www/html/humhub/themes/Freeflow ];then
+                        cd /var/www/html/humhub/themes
+                        git clone https://github.com/freeflowpages/freeflow-theme.git Freeflow
+                        chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/
+                        /usr/bin/php /var/www/html/humhub/protected/yii theme/switch Freeflow
+		else 
+			cd /var/www/html/humhub/themes/Freeflow
+			git pull
+                fi
+
 		chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/
 
         else
