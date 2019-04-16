@@ -48,6 +48,10 @@ else
 		dynamic_file="/var/www/html/humhub/protected/config/dynamic.php"
 		wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/common.php -O $common_file
 		wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/dynamic.php -O $dynamic_file
+		[ -f /var/www/html/humhub/.htaccess.dist ] && mv /var/www/html/humhub/.htaccess.dist /var/www/html/humhub/.htaccess
+		# run migrate script incase humhub database is old and migrated 
+		/usr/bin/php /var/www/html/humhub/protected/yii migrate/up --includeModuleMigrations=1
+		/usr/bin/php /var/www/html/humhub/protected/yii module/update-all
 		# add rest module if not exist
 		api_key=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 		if [ ! -d /var/www/html/humhub/protected/modules/rest ];then
@@ -65,6 +69,9 @@ else
 			chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/
 			/usr/bin/php /var/www/html/humhub/protected/yii theme/switch Freeflow
 		fi
+	else 
+		echo humhub directory is not empty as below 
+		ls -A /var/www/html/humhub
 	fi
 
 fi

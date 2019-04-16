@@ -119,7 +119,6 @@ export HOME=/root
 export LANG=en_US.UTF-8
 export LANGUAGE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
-# download startup script and start it
-wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/setup_ffp_script.sh -O /root/setup_ffp_script.sh
-bash /root/setup_ffp_script.sh
+# start startup script and start it
+bash /.setup_ffp_script.sh
 """
