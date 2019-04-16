@@ -32,6 +32,7 @@ if [ -f /var/www/html/humhub/protected/humhub/config/common.php ]; then
 		/usr/bin/php /var/www/html/humhub/protected/yii module/update-all
 		# add api module 
 		if [ ! -d /var/www/html/humhub/protected/modules/rest ];then
+			api_key=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
                         cd /var/www/html/humhub/protected/modules
                         git clone https://github.com/freeflowpages/freeflow-rest-api-module.git rest
                         chown -R www-data:www-data /var/www/
@@ -77,8 +78,8 @@ else
 		/usr/bin/php /var/www/html/humhub/protected/yii migrate/up --includeModuleMigrations=1
 		/usr/bin/php /var/www/html/humhub/protected/yii module/update-all
 		# add rest module if not exist
-		api_key=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 		if [ ! -d /var/www/html/humhub/protected/modules/rest ];then
+			api_key=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 			cd /var/www/html/humhub/protected/modules
 			git clone https://github.com/freeflowpages/freeflow-rest-api-module.git rest
 			chown -R www-data:www-data /var/www/
