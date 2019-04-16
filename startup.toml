@@ -120,26 +120,6 @@ export LANG=en_US.UTF-8
 export LANGUAGE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-INSTALL_FFP() {
-	   cd /var/www/html
-           wget https://www.humhub.org/en/download/package/humhub-$HUMHUB_INSTALLATION_VERSION.tar.gz > /dev/null
-           tar -xvf humhub-$HUMHUB_INSTALLATION_VERSION.tar.gz --strip-components=1 --directory /var/www/html/humhub > /dev/null
-           iyo_file=\"/var/www/html/humhub/protected/humhub/modules/user/authclient/IYO.php\"
-           common_file=\"/var/www/html/humhub/protected/config/common.php\"
-           dynamic_file=\"/var/www/html/humhub/protected/config/dynamic.php\"
-
-           [ -f \"$iyo_file\" ] || wget https://raw.githubusercontent.com/freeflowpages/freeflow-iyo-module/master/IYO.php -O $iyo_file
-           wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/common.php -O $common_file
-           wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/dynamic.php -O $dynamic_file
-
-           # for pretty urls
-           [ -f /var/www/html/humhub/.htaccess.dist ] && mv /var/www/html/humhub/.htaccess.dist /var/www/html/humhub/.htaccess
-
-           # run migrate script incase humhub version is updated
-           /usr/bin/php /var/www/html/humhub/protected/yii migrate/up --includeModuleMigrations=1
-           /usr/bin/php /var/www/html/humhub/protected/yii module/update-all
-}
-
 if [ -f /var/www/html/humhub/protected/humhub/config/common.php ]; then
         echo humhub version fie exist, checking running version ...
 	if [ -z \"$HUMHUB_INSTALLATION_VERSION\" ];then
@@ -153,11 +133,20 @@ if [ -f /var/www/html/humhub/protected/humhub/config/common.php ]; then
 		du -sh  /var/www/html/humhub/*
 		cd /var/www/html/humhub
 		mv $(ls -A) /backup/humhub`date +%Y-%m-%d`
-		INSTALL_FFP
+		cd /var/www/html
+		wget https://www.humhub.org/en/download/package/humhub-$HUMHUB_INSTALLATION_VERSION.tar.gz > /dev/null
+		tar -xvf humhub-$HUMHUB_INSTALLATION_VERSION.tar.gz --strip-components=1 --directory /var/www/html/humhub > /dev/null
+		iyo_file=\"/var/www/html/humhub/protected/humhub/modules/user/authclient/IYO.php\"
+		[ -f \"$iyo_file\" ] || wget https://raw.githubusercontent.com/freeflowpages/freeflow-iyo-module/master/IYO.php -O $iyo_file
 		cp -rp /backup/humhub`date +%Y-%m-%d`/uploads /var/www/html/humhub/uploads
 		cp -rp /backup/humhub`date +%Y-%m-%d`/protected/modules /var/www/html/humhub/protected/modules
 		cp -rp /backup/humhub`date +%Y-%m-%d`/themes /var/www/html/humhub/themes
 		cp -rp /backup/humhub`date +%Y-%m-%d`/protected/config /var/www/html/humhub/protected/config
+		# for prity urls
+		[ -f /var/www/html/humhub/.htaccess.dist ] && mv /var/www/html/humhub/.htaccess.dist /var/www/html/humhub/.htaccess
+		# run migrate script incase humhub version is updated
+		/usr/bin/php /var/www/html/humhub/protected/yii migrate/up --includeModuleMigrations=1
+		/usr/bin/php /var/www/html/humhub/protected/yii module/update-all
 
         else
                 echo humhub is already updated and it is version is $HUMHUB_CURRENT_PRODUCTION_VERSION
@@ -166,7 +155,14 @@ if [ -f /var/www/html/humhub/protected/humhub/config/common.php ]; then
 else
 	echo humhub version file does not exist, checking if it is fresh install ....
 	if [ \"$(find /var/www/html/humhub -maxdepth 0 -empty)\" ]; then
-		INSTALL_FFP
+		wget https://www.humhub.org/en/download/package/humhub-$HUMHUB_INSTALLATION_VERSION.tar.gz > /dev/null
+		tar -xvf humhub-$HUMHUB_INSTALLATION_VERSION.tar.gz --strip-components=1 --directory /var/www/html/humhub > /dev/null
+		iyo_file=\"/var/www/html/humhub/protected/humhub/modules/user/authclient/IYO.php\"
+		[ -f \"$iyo_file\" ] || wget https://raw.githubusercontent.com/freeflowpages/freeflow-iyo-module/master/IYO.php -O $iyo_file
+		common_file=\"/var/www/html/humhub/protected/config/common.php\"
+		dynamic_file=\"/var/www/html/humhub/protected/config/dynamic.php\"
+		wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/common.php -O $common_file
+		wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/dynamic.php -O $dynamic_file
 		# add rest module if not exist
 		api_key=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 		if [ ! -d /var/www/html/humhub/protected/modules/rest ];then
