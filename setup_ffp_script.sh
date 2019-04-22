@@ -59,6 +59,15 @@ if [ -f /var/www/html/humhub/protected/humhub/config/common.php ]; then
 
         else
                 echo humhub is already updated and it is version is $HUMHUB_CURRENT_PRODUCTION_VERSION
+		echo "update existing modules ........."
+		if [ -d /var/www/html/humhub/protected/modules/rest ];then
+			cd /var/www/html/humhub/protected/modules/rest
+			git pull
+		fi
+		if [ -d /var/www/html/humhub/themes/Freeflow ];then
+			cd /var/www/html/humhub/themes/Freeflow
+			git pull
+		fi
 
         fi
 else
