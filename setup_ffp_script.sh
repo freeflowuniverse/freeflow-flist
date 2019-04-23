@@ -54,20 +54,53 @@ if [ -f /var/www/html/humhub/protected/humhub/config/common.php ]; then
 			cd /var/www/html/humhub/themes/Freeflow
 			git pull
                 fi
+		# add 3bot login
+		if [ ! -d /var/www/html/humhub/protected/modules/threebot_login ];then
+			cd /var/www/html/humhub/protected/modules/
+			git clone https://github.com/freeflowpages/freeflow-threebot-login.git threebot_login
+			chown -R www-data:www-data /var/www/
+			/usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login
+		fi
 
 		chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/
 
         else
                 echo humhub is already updated and it is version is $HUMHUB_CURRENT_PRODUCTION_VERSION
 		echo "update existing modules ........."
+		# add rest module 
 		if [ -d /var/www/html/humhub/protected/modules/rest ];then
 			cd /var/www/html/humhub/protected/modules/rest
 			git pull
+		else
+                        api_key=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+                        cd /var/www/html/humhub/protected/modules
+                        git clone https://github.com/freeflowpages/freeflow-rest-api-module.git rest
+                        chown -R www-data:www-data /var/www/
+                        chmod -R 775 /var/www/
+                        /usr/bin/php /var/www/html/humhub/protected/yii module/enable rest
+                        mysql -uroot -p$ROOT_DB_PASS humhub -e "insert into api_user (client, api_key, active) values ('client1', '$api_key', 1)"
 		fi
+		# add them freeflow 
 		if [ -d /var/www/html/humhub/themes/Freeflow ];then
 			cd /var/www/html/humhub/themes/Freeflow
 			git pull
+		else
+                        cd /var/www/html/humhub/themes
+                        git clone https://github.com/freeflowpages/freeflow-theme.git Freeflow
+                        chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/
+                        /usr/bin/php /var/www/html/humhub/protected/yii theme/switch Freeflow
 		fi
+                # add 3bot login
+                if [ ! -d /var/www/html/humhub/protected/modules/threebot_login ];then
+                        cd /var/www/html/humhub/protected/modules/
+                        git clone https://github.com/freeflowpages/freeflow-threebot-login.git threebot_login
+                        chown -R www-data:www-data /var/www/
+                        /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login
+		else 
+			cd /var/www/html/humhub/protected/modules/threebot_login
+			git pull
+                fi
+
 
         fi
 else
@@ -103,6 +136,17 @@ else
 			chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/
 			/usr/bin/php /var/www/html/humhub/protected/yii theme/switch Freeflow
 		fi
+                # add 3bot login
+                if [ ! -d /var/www/html/humhub/protected/modules/threebot_login ];then
+                        cd /var/www/html/humhub/protected/modules/
+                        git clone https://github.com/freeflowpages/freeflow-threebot-login.git threebot_login
+                        chown -R www-data:www-data /var/www/
+                        /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login
+                else
+                        cd /var/www/html/humhub/protected/modules/threebot_login
+                        git pull
+                fi
+
 	else 
 		echo humhub directory is not empty as below 
 		ls -A /var/www/html/humhub
