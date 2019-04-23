@@ -37,8 +37,7 @@ if [ -f /var/www/html/humhub/protected/humhub/config/common.php ]; then
                         git clone https://github.com/freeflowpages/freeflow-rest-api-module.git rest
                         chown -R www-data:www-data /var/www/
                         chmod -R 775 /var/www/
-			sleep 7
-                        /usr/bin/php /var/www/html/humhub/protected/yii module/enable rest
+			(sleep 66 ; /usr/bin/php /var/www/html/humhub/protected/yii module/enable rest) &
                         mysql -uroot -p$ROOT_DB_PASS humhub -e "insert into api_user (client, api_key, active) values ('client1', '$api_key', 1)"
 		else 
 			cd /var/www/html/humhub/protected/modules/rest 
@@ -50,8 +49,7 @@ if [ -f /var/www/html/humhub/protected/humhub/config/common.php ]; then
                         cd /var/www/html/humhub/themes
                         git clone https://github.com/freeflowpages/freeflow-theme.git Freeflow
                         chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/
-			sleep 7
-                        /usr/bin/php /var/www/html/humhub/protected/yii theme/switch Freeflow
+			(sleep 66; /usr/bin/php /var/www/html/humhub/protected/yii theme/switch Freeflow) &
 		else 
 			cd /var/www/html/humhub/themes/Freeflow
 			git pull
@@ -61,8 +59,7 @@ if [ -f /var/www/html/humhub/protected/humhub/config/common.php ]; then
 			cd /var/www/html/humhub/protected/modules/
 			git clone https://github.com/freeflowpages/freeflow-threebot-login.git threebot_login
 			chown -R www-data:www-data /var/www/
-			sleep 7
-			/usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login
+			(sleep 66 ; /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login) &
 		fi
 
 		chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/
@@ -80,8 +77,7 @@ if [ -f /var/www/html/humhub/protected/humhub/config/common.php ]; then
                         git clone https://github.com/freeflowpages/freeflow-rest-api-module.git rest
                         chown -R www-data:www-data /var/www/
                         chmod -R 775 /var/www/
-			sleep 7
-                        /usr/bin/php /var/www/html/humhub/protected/yii module/enable rest
+			(sleep 66 ; /usr/bin/php /var/www/html/humhub/protected/yii module/enable rest) &
                         mysql -uroot -p$ROOT_DB_PASS humhub -e "insert into api_user (client, api_key, active) values ('client1', '$api_key', 1)"
 		fi
 		# add them freeflow 
@@ -92,16 +88,14 @@ if [ -f /var/www/html/humhub/protected/humhub/config/common.php ]; then
                         cd /var/www/html/humhub/themes
                         git clone https://github.com/freeflowpages/freeflow-theme.git Freeflow
                         chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/
-			sleep 7
-                        /usr/bin/php /var/www/html/humhub/protected/yii theme/switch Freeflow
+			(sleep 66 ; /usr/bin/php /var/www/html/humhub/protected/yii theme/switch Freeflow) &
 		fi
                 # add 3bot login
                 if [ ! -d /var/www/html/humhub/protected/modules/threebot_login ];then
                         cd /var/www/html/humhub/protected/modules/
                         git clone https://github.com/freeflowpages/freeflow-threebot-login.git threebot_login
                         chown -R www-data:www-data /var/www/
-			sleep 7
-                        /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login
+			(sleep 66 ; /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login) &
 		else 
 			cd /var/www/html/humhub/protected/modules/threebot_login
 			git pull
@@ -132,8 +126,7 @@ else
 			git clone https://github.com/freeflowpages/freeflow-rest-api-module.git rest
 			chown -R www-data:www-data /var/www/
 			chmod -R 775 /var/www/
-			sleep 7
-			/usr/bin/php /var/www/html/humhub/protected/yii module/enable rest
+			(sleep 66 ; /usr/bin/php /var/www/html/humhub/protected/yii module/enable rest) &
 			mysql -uroot -p$ROOT_DB_PASS humhub -e "insert into api_user (client, api_key, active) values ('client1', '$api_key', 1)"
 		fi
 		# add freeflow theme
@@ -141,16 +134,14 @@ else
 			cd /var/www/html/humhub/themes
 			git clone https://github.com/freeflowpages/freeflow-theme.git Freeflow
 			chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/
-			sleep 7
-			/usr/bin/php /var/www/html/humhub/protected/yii theme/switch Freeflow
+			(sleep 66 ; /usr/bin/php /var/www/html/humhub/protected/yii theme/switch Freeflow) &
 		fi
                 # add 3bot login
                 if [ ! -d /var/www/html/humhub/protected/modules/threebot_login ];then
                         cd /var/www/html/humhub/protected/modules/
                         git clone https://github.com/freeflowpages/freeflow-threebot-login.git threebot_login
                         chown -R www-data:www-data /var/www/
-			sleep 7
-                        /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login
+			(sleep 66 ; /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login) &
                 else
                         cd /var/www/html/humhub/protected/modules/threebot_login
                         git pull
