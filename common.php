@@ -13,6 +13,12 @@ return [
                     'class' => 'humhub\modules\user\authclient\IYO',
                     'clientId' => getenv('CLIENT_ID'),
                     'clientSecret' => getenv('CLIENT_SECRET'),
+	    ],
+	        '3bot' => [
+                    'class' => 'humhub\modules\threebot_login\authclient\ThreebotAuth',
+                    'clientId' => '3bot',
+                    'keyPair' => getenv('THREEBOT_KEY_PAIR'),
+
                 ],
             ],
     ],
