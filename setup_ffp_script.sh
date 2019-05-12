@@ -59,10 +59,15 @@ if [ -f /var/www/html/humhub/protected/humhub/config/common.php ]; then
 			cd /var/www/html/humhub/protected/modules/
 			git clone https://github.com/freeflowpages/freeflow-threebot-login.git threebot_login
 			chown -R www-data:www-data /var/www/
-			(sleep 85 ; /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login) &
-		fi
-
+			for ((i=1;i<=11;i++));
+			    do
+			        sleep 1
+			        /usr/bin/php /var/www/html/humhub/protected/yii module/list
+			        /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login
+			    done
+			(sleep 85 ;/usr/bin/php /var/www/html/humhub/protected/yii module/list; /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login) &
 		chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/
+		fi
 
         else
                 echo humhub is already updated and it is version is $HUMHUB_CURRENT_PRODUCTION_VERSION
