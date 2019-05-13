@@ -65,7 +65,7 @@ if [ -f /var/www/html/humhub/protected/humhub/config/common.php ]; then
 			        /usr/bin/php /var/www/html/humhub/protected/yii module/list
 			        /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login
 			    done
-			(sleep 85 ;/usr/bin/php /var/www/html/humhub/protected/yii module/list; /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login) &
+			    (sleep 85 ;/usr/bin/php /var/www/html/humhub/protected/yii module/list; /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login) &
 		chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/
 		fi
 
@@ -103,8 +103,13 @@ if [ -f /var/www/html/humhub/protected/humhub/config/common.php ]; then
                         cd /var/www/html/humhub/protected/modules/
                         git clone https://github.com/freeflowpages/freeflow-threebot-login.git threebot_login
                         chown -R www-data:www-data /var/www/
-
-			(sleep 85 ;/usr/bin/php /var/www/html/humhub/protected/yii module/list; /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login) &
+			            for ((i=1;i<=11;i++));
+			            do
+			                sleep 1
+			                /usr/bin/php /var/www/html/humhub/protected/yii module/list
+			                /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login
+			            done
+			            (sleep 85 ;/usr/bin/php /var/www/html/humhub/protected/yii module/list; /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login) &
 		else 
 			cd /var/www/html/humhub/protected/modules/threebot_login
 			git pull
