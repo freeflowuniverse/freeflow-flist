@@ -120,5 +120,6 @@ export LANG=en_US.UTF-8
 export LANGUAGE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 # start startup script and start it
-bash /.setup_ffp_script.sh || true
+bash /.setup_ffp_script.sh || echo 'Script setup_ffp_script.sh has exist with error,Please check this error'
+chown -R www-data. /var/www/html/humhub
 """
