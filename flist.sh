@@ -68,6 +68,7 @@ log_bin                 = /var/mysql/binlog/mysql-bin.log
 expire_logs_days        = 10
 max_binlog_size   = 100M
 binlog_do_db            = humhub
+query_cache_type	= 1
 EOF
 tar -cpzf "/root/archives/humhub.tar.gz" --exclude dev --exclude sys --exclude proc  /
 
