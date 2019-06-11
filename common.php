@@ -26,6 +26,9 @@ return [
     'urlManager' => [
              'showScriptName' => false,
              'enablePrettyUrl' => true,
+	     'rules' => [
+                '/user/registration' => '/user/auth/login'
+             ]
          ],
    ],
  	'params' => [
