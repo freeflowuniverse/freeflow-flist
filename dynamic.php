@@ -19,7 +19,7 @@
     ),
     'cache' => 
     array (
-      'class' => 'yii\\caching\\FileCache',
+      'class' => 'yii\\redis\\Cache',
       'keyPrefix' => 'humhub',
     ),
     'user' => 
