@@ -45,9 +45,11 @@ ffp_files_prepare ()
 		[ -f "$iyo_file" ] || wget https://raw.githubusercontent.com/freeflowpages/freeflow-iyo-module/master/IYO.php -O $iyo_file
 		common_file="/var/www/html/humhub/protected/config/common.php"
 		dynamic_file="/var/www/html/humhub/protected/config/dynamic.php"
+		htaccess_file="/var/www/html/humhub/.htaccess"
 		wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/common.php -O $common_file
 		wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/dynamic.php -O $dynamic_file
 		[ -f /var/www/html/humhub/.htaccess.dist ] && mv /var/www/html/humhub/.htaccess.dist /var/www/html/humhub/.htaccess
+		wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/htaccess -O $htaccess_file
 		# run migrate script incase humhub database is old and migrated
 		/usr/bin/php /var/www/html/humhub/protected/yii migrate/up --includeModuleMigrations=1
 		/usr/bin/php /var/www/html/humhub/protected/yii module/update-all
@@ -80,11 +82,10 @@ if [ -f /var/www/html/humhub/protected/humhub/config/common.php ]; then
     else
         echo humhub is already updated and it is version is $HUMHUB_CURRENT_PRODUCTION_VERSION
         echo "update existing modules ........."
-        # re-download common file if there is a modification
-        common_file="/var/www/html/humhub/protected/config/common.php"
-        wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/common.php -O $common_file
         # enable modules and themes
         modules_themes
+	# re-download common and dynamic incase updates
+	ffp_files_prepare
     fi
 
 else
