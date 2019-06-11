@@ -12,7 +12,7 @@ apt-get install php-intl php-zip wget -y
 apt-get install php-ldap php-apcu php-sqlite3 php-imagick imagemagick -y
 apt-get install cron ssh telnet -y
 apt-get install net-tools iputils-ping vim curl tmux rsync git -y
-apt-get install restic -y 
+apt-get install restic  redis-server -y 
 wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/startup.toml -O /.startup.toml
 wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/setup_ffp_script.sh -O /.setup_ffp_script.sh
 

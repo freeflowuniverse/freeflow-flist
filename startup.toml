@@ -68,6 +68,15 @@ args = [
     "-DFOREGROUND"
 ]
 
+[startup.redis]
+name = "core.system"
+protected = true
+after = ["setup"]
+
+[startup.redis.args]
+name = "redis-server"
+args = [ "--daemonize", "yes" ]
+
 [startup.cron1]
 name = "bash"
 recurring_period = 60
