@@ -71,7 +71,7 @@ args = [
 [startup.redis]
 name = "core.system"
 protected = true
-after = ["setup"]
+after = ["mysql"]
 
 [startup.redis.args]
 name = "redis-server"
