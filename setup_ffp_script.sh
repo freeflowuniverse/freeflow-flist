@@ -25,19 +25,47 @@ modules_themes ()
             cd /var/www/html/humhub/themes/Freeflow
             git pull
          fi
-        # add 3bot login
-        if [ ! -d /var/www/html/humhub/protected/modules/threebot_login ];then
-            cd /var/www/html/humhub/protected/modules/
-            git clone https://github.com/freeflowpages/freeflow-threebot-login.git threebot_login
-            chown -R www-data:www-data /var/www/
-            sleep 1 ; sync ; sleep 2
-            /usr/bin/php /var/www/html/humhub/protected/yii module/list
-            /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login
+        # check if it staging add 3bot login fot staging
+        if [ "$threebot_stag" = "True" ] || [ "$threebot_stag" = "true" ] ; then
+            echo "installing 3bot module for staging ......"
+            if [ ! -d /var/www/html/humhub/protected/modules/threebot_login ];then
+                cd /var/www/html/humhub/protected/modules/
+                git clone https://github.com/freeflowpages/freeflow-threebot-login.git -b staging threebot_login
+                chown -R www-data:www-data /var/www/
+                sleep 1 ; sync ; sleep 2
+                /usr/bin/php /var/www/html/humhub/protected/yii module/list
+                /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login
+            else
+                cd /var/www/html/humhub/protected/modules/threebot_login
+                BRANCH=$(git branch | sed -nr 's/\*\s(.*)/\1/p')
+                if [ -z $BRANCH ] || [ $BRANCH = "staging" ]; then
+                    git pull
+                else
+                    echo "please note 3bot is not staging you need to checkout to staging branch"
+                    cd /var/www/html/humhub/protected/modules/
+                    rm -rf threebot_login
+                    git clone https://github.com/freeflowpages/freeflow-threebot-login.git -b staging threebot_login
+                    chown -R www-data:www-data /var/www/
+                    sleep 1 ; sync ; sleep 2
+                    /usr/bin/php /var/www/html/humhub/protected/yii module/list
+                    /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login
+                fi
+            fi
         else
-            cd /var/www/html/humhub/protected/modules/threebot_login
-            git pull
+            echo "Please verify if you need a 3bot login module for staging only set it to be True "
+                if [ ! -d /var/www/html/humhub/protected/modules/threebot_login ];then
+                cd /var/www/html/humhub/protected/modules/
+                git clone https://github.com/freeflowpages/freeflow-threebot-login.git threebot_login
+                chown -R www-data:www-data /var/www/
+                sleep 1 ; sync ; sleep 2
+                /usr/bin/php /var/www/html/humhub/protected/yii module/list
+                /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login
+            else
+                cd /var/www/html/humhub/protected/modules/threebot_login
+                git pull
+            fi
         fi
-        }
+       }
 
 ffp_files_prepare ()
         {
