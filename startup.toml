@@ -75,7 +75,6 @@ after = ["setup"]
 
 [startup.redis.args]
 name = "redis-server"
-args = [ "--daemonize yes" ]
 
 [startup.cron1]
 name = "bash"
