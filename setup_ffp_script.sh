@@ -41,14 +41,11 @@ modules_themes ()
                 if [ -z $BRANCH ] || [ $BRANCH = "staging" ]; then
                     git pull
                 else
-                    echo "please note 3bot is not staging you need to checkout to staging branch"
-                    cd /var/www/html/humhub/protected/modules/
-                    rm -rf threebot_login
-                    git clone https://github.com/freeflowpages/freeflow-threebot-login.git -b staging threebot_login
-                    chown -R www-data:www-data /var/www/
-                    sleep 1 ; sync ; sleep 2
-                    /usr/bin/php /var/www/html/humhub/protected/yii module/list
-                    /usr/bin/php /var/www/html/humhub/protected/yii module/enable threebot_login
+                    echo "please note 3bot branch is not staging you need to checkout to staging branch"
+                    git reset --hard
+                    git pull
+                    git checkout staging
+                    git pull
                 fi
             fi
         else
