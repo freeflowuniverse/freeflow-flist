@@ -71,6 +71,6 @@ binlog_do_db            = humhub
 query_cache_type	= 1
 EOF
 # change php file upload size settings to meet one in humhub, let set it to be 150M
-sed 's/post_max_size.*/post_max_size = 150M/g;s/upload_max_filesize.*/upload_max_filesize = 150M/g' /etc/php/7.2/apache2/php.ini
+sed -i 's/post_max_size.*/post_max_size = 150M/g;s/upload_max_filesize.*/upload_max_filesize = 150M/g' /etc/php/7.2/apache2/php.ini
 tar -cpzf "/root/archives/humhub.tar.gz" --exclude dev --exclude sys --exclude proc  /
 
