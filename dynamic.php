@@ -22,13 +22,6 @@
       'class' => 'yii\\redis\\Cache',
       'keyPrefix' => 'humhub',
     ),
-    'file' =>
-    array (
-      'maxFileSize' => '10048576',
-      'maxPreviewImageWidth' => '400',
-      'maxPreviewImageHeight' => '400',
-      'hideImageFileInfo' => '0',
-    ),
     'user' => 
     array (
     ),
