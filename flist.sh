@@ -12,10 +12,14 @@ apt-get install php-intl php-zip wget -y
 apt-get install php-ldap php-apcu php-sqlite3 php-imagick imagemagick -y
 apt-get install cron ssh telnet -y
 apt-get install net-tools iputils-ping vim curl tmux rsync git -y
-apt-get install restic  redis-server -y 
+apt-get install golang-go redis-server -y 
 wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/startup.toml -O /.startup.toml
 wget https://raw.githubusercontent.com/freeflowpages/freeflow-flist/master/setup_ffp_script.sh -O /.setup_ffp_script.sh
-
+git clone https://github.com/restic/restic
+cd restic
+go run build.go
+cp -p restic /usr/bin/restic
+rm -rf restic
 cd /etc/apache2/sites-available
 rm 000-default.conf
 
