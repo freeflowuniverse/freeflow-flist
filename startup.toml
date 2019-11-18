@@ -107,7 +107,7 @@ humhub_dir='/var/www/html/humhub'
 cd $humhub_dir 
 mysqldump -uroot -p$ROOT_DB_PASS humhub > dbbackup_$backup_time.sql
 find  $humhub_dir -maxdepth 1 -type f -name 'dbbackup*.gz' -delete
-gzip dbbackup_$backup_time.sql
+gzip dbbackup_$backup_time.sql && rm dbbackup_$backup_time.sql
 find  /backup -maxdepth 1 -type f -name 'dbbackup*.gz' -mtime +31 -delete
 unset HISTFILE
 if ! restic snapshots ;then echo restic repo does not initalized yet; restic init ; fi > /dev/null
@@ -116,7 +116,7 @@ if ! restic snapshots ;then echo restic repo does not initalized yet; restic ini
 """
 [startup.cron4]
 name = "bash"
-recurring_period=43200
+recurring_period=86400
 after = ["cron3"]
 
 [startup.cron4.args]
