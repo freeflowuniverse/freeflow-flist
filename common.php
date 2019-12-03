@@ -34,7 +34,12 @@ return [
              'enablePrettyUrl' => true,
 	     'rules' => [
                 '/user/registration' => '/user/auth/login'
-             ]
+             ],
+	     'normalizer' => [
+                  'class' => 'yii\web\UrlNormalizer',
+                    // use temporary redirection instead of permanent for debugging
+                   'action' => UrlNormalizer::ACTION_REDIRECT_PERMANENT,
+              ]
          ],
    ],
  	'params' => [
