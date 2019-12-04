@@ -5,6 +5,8 @@
  * @see http://docs.humhub.org/admin-installation-configuration.html
  * @see http://docs.humhub.org/dev-environment.html
  */
+
+use  yii\web\UrlNormalizer;
 return [
     'components' => [
 	'redis' => [

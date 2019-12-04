@@ -74,6 +74,10 @@ modules_themes ()
 
         else
 
+            echo "disable debug mode in production by disabling it from index.php file"
+            cd /var/www/html/humhub
+            sed -i "s|require(__DIR__ . '/protected/vendor/yiisoft/yii2/Yii.php');||g" index.php
+            sed -i "s|require(__DIR__ . '/protected/vendor/autoload.php');||g" index.php
             echo "Please verify if you need a 3bot login modules for staging only set it to be True, now installing production one .... "
             if [ ! -d /var/www/html/humhub/protected/modules/threebot_login ];then
                 cd /var/www/html/humhub/protected/modules/
