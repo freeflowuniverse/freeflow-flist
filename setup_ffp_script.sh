@@ -48,9 +48,34 @@ modules_themes ()
                     git pull
                 fi
             fi
+
+
+            if [ ! -d /var/www/html/humhub/protected/modules/freeflow_extras ];then
+                echo 'installing freeflow_extra module ........................'
+                cd /var/www/html/humhub/protected/modules/
+                git clone https://github.com/freeflowpages/freeflow-extras.git -b staging freeflow_extras
+                chown -R www-data:www-data /var/www/
+                sleep 1 ; sync ; sleep 2
+                /usr/bin/php /var/www/html/humhub/protected/yii module/list
+                /usr/bin/php /var/www/html/humhub/protected/yii module/enable freeflow_extras
+            else
+                cd /var/www/html/humhub/protected/modules/freeflow_extras
+                BRANCH=$(git branch | sed -nr 's/\*\s(.*)/\1/p')
+                if [ -z $BRANCH ] || [ $BRANCH = "staging" ]; then
+                    git pull
+                else
+                    echo "please note 3bot branch is not staging you need to checkout to staging branch"
+                    git reset --hard
+                    git pull
+                    git checkout staging
+                    git pull
+                fi
+            fi
+
         else
-            echo "Please verify if you need a 3bot login module for staging only set it to be True "
-                if [ ! -d /var/www/html/humhub/protected/modules/threebot_login ];then
+
+            echo "Please verify if you need a 3bot login modules for staging only set it to be True, now installing production one .... "
+            if [ ! -d /var/www/html/humhub/protected/modules/threebot_login ];then
                 cd /var/www/html/humhub/protected/modules/
                 git clone https://github.com/freeflowpages/freeflow-threebot-login.git threebot_login
                 chown -R www-data:www-data /var/www/
@@ -61,7 +86,21 @@ modules_themes ()
                 cd /var/www/html/humhub/protected/modules/threebot_login
                 git pull
             fi
+
+            if [ ! -d /var/www/html/humhub/protected/modules/freeflow_extras ];then
+                cd /var/www/html/humhub/protected/modules/
+                git clone https://github.com/freeflowpages/freeflow-extras.git freeflow_extras
+                chown -R www-data:www-data /var/www/
+                sleep 1 ; sync ; sleep 2
+                /usr/bin/php /var/www/html/humhub/protected/yii module/list
+                /usr/bin/php /var/www/html/humhub/protected/yii module/enable freeflow_extras
+            else
+                cd /var/www/html/humhub/protected/modules/freeflow_extras
+                git pull
+            fi
         fi
+
+
        }
 
 ffp_files_prepare ()
