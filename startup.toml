@@ -144,6 +144,9 @@ export HOME=/root
 export LANG=en_US.UTF-8
 export LANGUAGE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
+echo 'remove a record was added by zos that make our server slow, below is resolv.conf file contents'
+cat /etc/resolv.conf
+sed '/^nameserver 10./d' /etc/resolv.conf
 # start startup script and start it
 bash /.setup_ffp_script.sh || echo 'Script setup_ffp_script.sh has exist with error,Please check this error'
 chown -R www-data. /var/www/html/humhub
