@@ -1,0 +1,153 @@
+[startup.ssh_init]
+name = "bash"
+running_delay = -1
+
+[startup.ssh_init.args]
+script = """
+chmod 400 -R /etc/ssh/
+mkdir -p /run/sshd
+[ -d /root/.ssh/ ] || mkdir /root/.ssh
+"""
+
+[startup.sshd]
+name = "core.system"
+after = ["ssh_init"]
+protected = true
+
+[startup.sshd.args]
+name = "/usr/sbin/sshd"
+args = ["-e", "-D"]
+
+[startup.mysql_init]
+name = "bash"
+running_delay = -1
+
+[startup.mysql_init.args]
+script = """
+mkdir /var/run/mysqld
+chown -R mysql /var/lib/mysql
+chown -R mysql /var/log/mysql
+chown -R mysql /var/run/mysqld
+chown -R mysql /var/mysql/binlog
+chown -R mysql /var/run/mysqld
+find /var/lib/mysql/ -maxdepth 0 -empty -exec  /usr/sbin/mysqld --initialize-insecure --user=mysql --datadir=/var/lib/mysql/ \\;
+"""
+
+[startup.mysql]
+name = "core.system"
+after = ["mysql_init"]
+protected = true
+
+[startup.mysql.args]
+name = "mysqld"
+
+[startup.db_create]
+name = "bash"
+running_delay = -1
+after = ["mysql"]
+
+[startup.db_create.args]
+script = """
+user=$DB_USER
+pass=$DB_PASS
+if [ ! -d /var/lib/mysql/humhub/ ] ; then
+mysql -e 'CREATE DATABASE IF NOT EXISTS humhub CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
+mysql -e \"GRANT ALL ON humhub.* TO '$user'@'localhost' IDENTIFIED BY '$pass'\"
+mysql -e 'FLUSH PRIVILEGES'
+fi
+mysqladmin --user=root --password=  password \"$ROOT_DB_PASS\" &&  password reset successfully || echo ignore error 
+"""
+[startup.apache]
+name = "core.system"
+protected = true
+after = ["setup"]
+
+[startup.apache.args]
+name = "apachectl"
+args = [
+    "-DFOREGROUND"
+]
+
+[startup.redis]
+name = "core.system"
+protected = true
+after = ["mysql"]
+
+[startup.redis.args]
+name = "redis-server"
+
+[startup.cron1]
+name = "bash"
+recurring_period = 60
+
+[startup.cron1.args]
+script = """
+/usr/bin/php /var/www/html/humhub/protected/yii queue/run >/dev/null 2>&1
+"""
+
+[startup.cron2]
+name = "bash"
+recurring_period=60
+
+[startup.cron2.args]
+script = """
+/usr/bin/php /var/www/html/humhub/protected/yii cron/run >/dev/null 2>&1
+/usr/bin/php /var/www/html/humhub/protected/yii search/rebuild >/dev/null 2>&1
+"""
+
+[startup.cron3]
+name = "bash"
+recurring_period=7200
+after = ["setup"]
+
+[startup.cron3.args]
+script = """
+backup_time=`date +%Y-%m-%d_%H%M`
+humhub_dir='/var/www/html/humhub'
+cd $humhub_dir 
+mysqldump -uroot -p$ROOT_DB_PASS humhub > dbbackup_$backup_time.sql && find  $humhub_dir -maxdepth 1 -type f -name 'dbbackup*.gz' -delete
+gzip dbbackup_$backup_time.sql 
+unset HISTFILE
+if ! restic snapshots ;then echo restic repo does not initalized yet; restic init ; fi > /dev/null
+/usr/bin/restic backup -q $humhub_dir
+/usr/bin/restic forget -q --prune --keep-within 2m
+"""
+[startup.cron4]
+name = "bash"
+recurring_period=86400
+after = ["cron3"]
+
+[startup.cron4.args]
+script = """
+backup_time=`date +%Y-%m-%d_%H%M`
+humhub_dir='/var/www/html/humhub'
+cd $humhub_dir
+mkdir -p /backup/humhub_$backup_time
+cp -rp * /backup/humhub_$backup_time
+cd /backup/
+tar -czvf humhub_$backup_time.tar.gz humhub_$backup_time > /dev/null && rm -rf humhub_$backup_time
+find  /backup -maxdepth 1 -type f -name 'humhub*.tar.gz' -mtime +31 -delete
+"""
+
+
+
+[startup.setup]
+name = "bash"
+running_delay = -1
+after = ["db_create"]
+
+[startup.setup.args]
+script = """
+sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    locale-gen
+export HOME=/root
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+echo 'remove a record was added by zos that make our server slow, below is resolv.conf file contents'
+cat /etc/resolv.conf
+sed -i '/^nameserver 10./d' /etc/resolv.conf
+# start startup script and start it
+bash /.setup_ffp_script.sh || echo 'Script setup_ffp_script.sh has exist with error,Please check this error'
+chown -R www-data. /var/www/html/humhub
+"""

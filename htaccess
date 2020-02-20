@@ -19,6 +19,11 @@
     # ensure permalink when url rewriting was enabled (index.php?r=content/perma&id=6 => /content/perma/?id=6
     RewriteCond %{QUERY_STRING} ^r=content(/|%2)perma&id=([0-9]*)$
     RewriteRule ^index\.php$ %{REQUEST_URI}/content/perma/?id=%2 [R=302,L]
+    
+    RewriteCond %{QUERY_STRING} ^crisp=false$
+    RewriteRule .* -  [CO=crisp:false;HttpOnly;Secure:%{HTTP_HOST}]
+    RewriteCond %{QUERY_STRING} ^crisp=true$
+    RewriteRule .* -  [CO=crisp:true;HttpOnly;Secure:%{HTTP_HOST}]
 
     RewriteCond %{REQUEST_URI}::$1 ^(/.+)/(.*)::\2$
     RewriteRule ^(.*) - [E=BASE:%1]

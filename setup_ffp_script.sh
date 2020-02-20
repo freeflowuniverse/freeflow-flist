@@ -20,10 +20,6 @@ modules_themes ()
             git clone https://github.com/freeflowpages/freeflow-theme.git Freeflow
             chown -R www-data:www-data /var/www/; chmod -R 775 /var/www/
             sleep 1 ; sync ; sleep 2
-	    echo "env var ######################################################"
-	    env
-	    echo  "###########################################################"
-	    env | grep -i db
             /usr/bin/php /var/www/html/humhub/protected/yii theme/switch Freeflow
         else
             cd /var/www/html/humhub/themes/Freeflow
@@ -168,15 +164,12 @@ else
 		wget https://www.humhub.org/en/download/package/humhub-$HUMHUB_INSTALLATION_VERSION.tar.gz > /dev/null
 		tar -xvf humhub-$HUMHUB_INSTALLATION_VERSION.tar.gz --strip-components=1 --directory /var/www/html/humhub > /dev/null
 		# download configuration files again
-		#ffp_files_prepare
+		ffp_files_prepare
 		# enable modules and themes
-		#modules_themes
-		chown -R www-data:www-data /var/www/
-		echo "please login to freeflowpages and setup admin account to http://localhost, then reboot container"
+		modules_themes
 	else
-        echo "humhub directory is not empty as below, please verify that case may be installation not completed"
+        echo "humhub directory is not empty as below, please verify that case"
 		ls -A /var/www/html/humhub
-		exit 1
 	fi
 
 fi
